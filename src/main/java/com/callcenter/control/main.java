@@ -15,10 +15,15 @@ import com.callcenter.Supervisor;
  * @author LENOVO
  */
 public class main {
+
     public static void main(String[] args) {
 
+        Registro reg = new Registro();
         boolean res = false;
         Dispatcher dispacher = new Dispatcher();
+        Dispatcher dispacher2 = new Dispatcher();
+        Dispatcher dispacher3 = new Dispatcher();
+
         Empleado emp1 = new Operador("juan");
         Empleado emp2 = new Operador("daniel");
         Empleado emp3 = new Operador("lorena");
@@ -26,22 +31,30 @@ public class main {
         Empleado emp5 = new Supervisor("rafael");
         Empleado emp6 = new Director("karen");
 
-        dispacher.agregarEmpleado(emp1);
-        dispacher.agregarEmpleado(emp2);
-        dispacher.agregarEmpleado(emp3);
-        dispacher.agregarEmpleado(emp4);
-        dispacher.agregarEmpleado(emp5);
-        dispacher.agregarEmpleado(emp6);
+        reg.agregarEmpleado(emp1);
+        reg.agregarEmpleado(emp2);
+        reg.agregarEmpleado(emp3);
+        reg.agregarEmpleado(emp4);
+        reg.agregarEmpleado(emp5);
+        reg.agregarEmpleado(emp6);
 
-        Llamada llamda1 = new Llamada(3);
-        Llamada llamda2 = new Llamada(5);
-        Llamada llamda3 = new Llamada(2);
+        Llamada llamda1 = new Llamada();
+        System.out.println("llamda1 :" + llamda1);
+        Llamada llamda2 = new Llamada();
+        System.out.println("llamda1 :" + llamda2);
+        Llamada llamda3 = new Llamada();
+        System.out.println("llamda1 :" + llamda3);
 
-        dispacher.agregarLlamada(llamda1);
-        dispacher.agregarLlamada(llamda2);
-        dispacher.agregarLlamada(llamda3);
-
+        dispacher.setRegistro(reg);
+        dispacher.setLlamada(llamda1);
         dispacher.start();
+        dispacher2.setRegistro(reg);
+        dispacher2.setLlamada(llamda2);
+        dispacher2.start();
+        dispacher3.setRegistro(reg);
+        dispacher3.setLlamada(llamda3);
+        dispacher3.start();
+
     }
 
 }

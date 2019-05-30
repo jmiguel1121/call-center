@@ -5,6 +5,8 @@
  */
 package com.callcenter.control;
 
+import java.util.Random;
+
 /**
  *
  * @author LENOVO
@@ -14,9 +16,9 @@ public class Llamada {
     private Integer duracion;
     private boolean atendida;
 
-
-    public Llamada(Integer duracion) {
-        this.duracion = duracion;
+    public Llamada() {
+        Random r = new Random();
+        this.duracion = r.nextInt((10 - 5) + 1) + 5;;
     }
 
     public Integer getDuracion() {
@@ -37,7 +39,7 @@ public class Llamada {
 
     @Override
     public String toString() {
-        return "Llamada{" + "duracion=" + duracion + '}';
+        return "Llamada{" + "duracion=" + duracion + ", atendida=" + atendida + '}';
     }
 
 }

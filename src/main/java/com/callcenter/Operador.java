@@ -17,9 +17,16 @@ public class Operador extends Empleado {
         super(nombre);
     }
 
+    /**
+     * asigna la llamda al empleado
+     *
+     * @param llamada
+     * @return
+     */
     @Override
     public boolean resicibirLlamada(Llamada llamada) {
         if (llamada != null) {
+            llamada.setAtendida(true);
             this.llamada = llamada;
             this.atendiendoLlamda = true;
             return true;

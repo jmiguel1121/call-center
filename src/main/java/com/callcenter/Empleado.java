@@ -21,6 +21,12 @@ public abstract class Empleado {
         this.nombre = nombre;
     }
 
+    /**
+     * asigna la llamda al empleado
+     *
+     * @param llamada
+     * @return
+     */
     public abstract boolean resicibirLlamada(Llamada llamada);
 
     public abstract void removerLlamada();

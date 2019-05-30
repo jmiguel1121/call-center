@@ -6,8 +6,6 @@
 package com.callcenter.control;
 
 import com.callcenter.Empleado;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -19,34 +17,31 @@ import java.util.logging.Logger;
  */
 public class Dispatcher extends Thread {
 
-    private List<Llamada> llamadas;
-    private List<Empleado> empleados;
+    private Llamada llamada;
     private Timer teimpoLlamada;
+    private Registro registro;
 
     public Dispatcher() {
-        this.llamadas = new ArrayList();
-        this.empleados = new ArrayList();
-
     }
 
-    public void agregarLlamada(Llamada llamada) {
-        llamadas.add(llamada);
+    public Registro getRegistro() {
+        return registro;
     }
 
-    public void agregarEmpleado(Empleado empleado) {
-        empleados.add(empleado);
+    public void setRegistro(Registro registro) {
+        this.registro = registro;
     }
 
-    public void removerEmpleado(Empleado empleado) {
-        empleados.remove(empleado);
+    public Llamada getLlamada() {
+        return llamada;
     }
 
-    public void limpiarLladas(Llamada llamada) {
-        llamadas.remove(llamada);
+    public void setLlamada(Llamada llamada) {
+        this.llamada = llamada;
     }
 
     /**
-     *
+     * asigna la llamda al empleado que se encuentra disponible
      */
     public void asignarllamda(Empleado empleado, Llamada llamada) {
         empleado.resicibirLlamada(llamada);
@@ -54,18 +49,53 @@ public class Dispatcher extends Thread {
         System.out.println(empleado.toString());;
     }
 
+    /**
+     * inicializa el bucle para encontrar empleado disponovle e asignar la
+     * allamada inciando los operarios despues supervisores y al final
+     * direstores
+     *
+     * @throws InterruptedException
+     */
     public void dispatchCall() throws InterruptedException {
         try {
             System.out.println("asignar llamada...");
-            while (llamadas.size() > 0) {
-                for (Empleado empleado : empleados) {
-                    for (Llamada llamada : llamadas) {
+            while (!llamada.isAtendida()) {
+                for (Empleado empleado : registro.getOperadores()) {
+                    if (!empleado.isAtendiendoLlamda() && !llamada.isAtendida()) {
+                        asignarllamda(empleado, llamada);
+                        registro.agregarLlamada(llamada);
+                        teimpoLlamada = new Timer();
+                        teimpoLlamada.schedule(
+                                finalizarLlamada(empleado),
+                                llamada.getDuracion()
+                        );
+                        break;
+                    }
+                }
+                if (!llamada.isAtendida()) {
+                    for (Empleado empleado : registro.getSupervisores()) {
                         if (!empleado.isAtendiendoLlamda() && !llamada.isAtendida()) {
                             asignarllamda(empleado, llamada);
+                            registro.agregarLlamada(llamada);
                             teimpoLlamada = new Timer();
-                            teimpoLlamada.schedule(finalizarLlamada(empleado), llamada.getDuracion() * 60000);
-                        } else {
-//                            System.out.println("empleado no disponible");
+                            teimpoLlamada.schedule(
+                                    finalizarLlamada(empleado),
+                                    llamada.getDuracion()
+                            );
+                            break;
+                        }
+                    }
+                } else if (!llamada.isAtendida()) {
+                    for (Empleado empleado : registro.getDirectores()) {
+                        if (!empleado.isAtendiendoLlamda() && !llamada.isAtendida()) {
+                            asignarllamda(empleado, llamada);
+                            registro.agregarLlamada(llamada);
+                            teimpoLlamada = new Timer();
+                            teimpoLlamada.schedule(
+                                    finalizarLlamada(empleado),
+                                    llamada.getDuracion()
+                            );
+                            break;
                         }
                     }
                 }
@@ -75,6 +105,9 @@ public class Dispatcher extends Thread {
         }
     }
 
+    /**
+     * inicializa el hilo
+     */
     @Override
     public void run() {
         try {
@@ -84,6 +117,13 @@ public class Dispatcher extends Thread {
         }
     }
 
+    /**
+     * finaliza la llamda y la remueve del empleado al culminar del tiempo de la
+     * llamda
+     *
+     * @param empleado
+     * @return
+     */
     public TimerTask finalizarLlamada(Empleado empleado) {
         TimerTask eliminar = new TimerTask() {
             @Override
@@ -91,9 +131,7 @@ public class Dispatcher extends Thread {
                 empleado.removerLlamada();
                 teimpoLlamada.cancel();
             }
-
         };
-
         return eliminar;
     }
 }

@@ -20,6 +20,7 @@ public class Director extends Empleado {
     @Override
     public boolean resicibirLlamada(Llamada llamada) {
         if (llamada != null) {
+            llamada.setAtendida(true);
             this.llamada = llamada;
             this.atendiendoLlamda = true;
             return true;
