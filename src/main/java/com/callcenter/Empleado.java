@@ -17,6 +17,9 @@ public abstract class Empleado {
     protected boolean atendiendoLlamda;
     protected Llamada llamada;
 
+	/**
+	 * cambio feature1
+	 */
     public Empleado(String nombre) {
         this.nombre = nombre;
     }
